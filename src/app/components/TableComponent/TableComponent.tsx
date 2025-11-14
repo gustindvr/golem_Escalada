@@ -14,7 +14,7 @@ const TableComponent = () => {
   const [pagos, setPagos] = useState<Pagos[]>([]);
   
   useEffect(() => {
-    fetch("/api/pagos")
+    fetch("/api/payments")
       .then(res => res.json())
       .then(data => setPagos(data.data))
   }, [])

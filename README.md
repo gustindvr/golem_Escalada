@@ -1,4 +1,4 @@
-### Golem Escalada — Sistema de Gestión de Pagos
+# Golem Escalada — Sistema de Gestión de Pagos
 
 Golem Escalada es una aplicación web diseñada para facilitar la administración de pagos, clientes y registros internos dentro de un centro de escalada.
 El objetivo principal del proyecto es agilizar tareas administrativas, mejorar la organización financiera y ofrecer una interfaz moderna, clara y totalmente responsive.
@@ -6,7 +6,7 @@ El objetivo principal del proyecto es agilizar tareas administrativas, mejorar l
 Este proyecto forma parte de un proceso de mejora continua para digitalizar operaciones internas y optimizar el manejo de información.
 
 ## Tecnologías Utilizadas
-# Frontend
+### Frontend
 
 Next.js 14 (App Router)
 
@@ -18,7 +18,7 @@ Ant Design
 
 TailwindCSS
 
-# Backend
+### Backend
 
 API Routes de Next.js
 
@@ -26,7 +26,7 @@ Node.js
 
 MySQL (mysql2/promise)
 
-## Características Principales
+### Características Principales
 
 ✔️ Registro de pagos mediante formulario validado
 
@@ -44,7 +44,7 @@ MySQL (mysql2/promise)
 
 ✔️ Logo diseñado especialmente para esta aplicación
 
-## Objetivo del Proyecto
+### Objetivo del Proyecto
 
 La intención es desarrollar una herramienta interna confiable y escalable que permita:
 
@@ -56,7 +56,7 @@ Reducir errores manuales
 
 Unificar la información financiera en una sola plataforma
 
-## Roadmap
+### Roadmap
 
   ❎ Implementar búsqueda y filtrado avanzado
   ❎ Exportación a PDF/Excel
@@ -65,7 +65,7 @@ Unificar la información financiera en una sola plataforma
   ❎ Implementar el pago a través de la plataforma
 
 ##  Desarrollado por
-# Agustín Del Valle
+### Agustín Del Valle
 Desarrollador Frontend / Fullstack
 
 ## Licencia
