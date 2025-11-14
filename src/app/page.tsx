@@ -3,11 +3,13 @@
 import CreatePayment from "./components/Payments/CreatePayment"
 import { Col, Image, Row } from "antd"
 import TableComponent from "./components/TableComponent/TableComponent"
+import Navbar from "./components/Navbar/Navbar"
 
 export default function Home() {
 
   return (
     <main className="p-6">
+      <Navbar />
       <div className="flex justify-center items-center w-full">
         <Image
           src="/Logo.png"

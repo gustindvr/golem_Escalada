@@ -1,14 +1,17 @@
 import { Button, DatePicker, Form, FormProps, Input, InputNumber, Select } from "antd";
 import { useState } from "react";
 import { PropsAlert, ShowAlert } from "../Common/AlertCmponent/AlertComponent";
+import { registerPayment } from "@/services/payments";
+import { PaymentCreateDTO } from "@/types/payments";
 
 type FieldType = {
+  id: number,
   name: string;
-  amount: string;
+  amount: number;
   type: string;
   date: {
     $d: Date;
-  } | null;
+  }
 };
 
 const CreatePayment = () => {
@@ -19,33 +22,36 @@ const CreatePayment = () => {
   });
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-    const jsDate = values.date?.$d;
-    const isoDate = jsDate ? new Date(jsDate).toISOString() : null;
+  const jsDate = values.date?.$d;
+  const isoDate = jsDate ? new Date(jsDate).toISOString() : null;
 
-    try {
-      const res = await fetch("/api/pagos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, date: isoDate }),
-      });
-      if (res.status === 201) {
-        setAlert({
-          show: true,
-          status: "success",
-          message: "Registro creado con éxito",
-        });
-        setTimeout(() => setAlert((prev) => ({ ...prev, show: false })), 5000);
-      }
-    } catch (error) {
+  const payload: PaymentCreateDTO = {
+    name: values.name,
+    amount: Number(values.amount),
+    type: values.type,
+    date: isoDate,
+  };
+
+  try {
+    const res = await registerPayment(payload);
+    if (res?.status === 201) {
       setAlert({
         show: true,
-        status: "error",
-        message: "Error al intentar crear el registro",
+        status: "success",
+        message: "Registro creado con éxito",
       });
+
       setTimeout(() => setAlert((prev) => ({ ...prev, show: false })), 5000);
-      console.error(error);
     }
-  };
+  } catch (error) {
+    setAlert({
+      show: true,
+      status: "error",
+      message: "Error al intentar crear el registro",
+    });
+    setTimeout(() => setAlert((prev) => ({ ...prev, show: false })), 5000);
+  }
+};
 
   const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
     console.error("Error:", errorInfo);
