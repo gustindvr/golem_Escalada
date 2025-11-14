@@ -1,0 +1,28 @@
+.alert-overlay {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  min-width: 300px;
+  max-width: 80%;
+  padding: 1rem;
+  animation: fadeInOut 5s forwards;
+}
+
+/* Animación suave de entrada y salida */
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -45%);
+  }
+  10%,
+  90% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -55%);
+  }
+}
