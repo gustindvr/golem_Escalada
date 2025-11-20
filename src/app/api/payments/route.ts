@@ -1,4 +1,5 @@
 import { pool } from "@/lib/db";
+import { PaymentCreateDTO } from "@/types/payments";
 import { apiResponse } from "@/utils/apiResponse";
 import { ResultSetHeader, RowDataPacket } from 'mysql2';
 
@@ -6,43 +7,38 @@ import { ResultSetHeader, RowDataPacket } from 'mysql2';
 // ==================== POST (Create) ====================
 export async function POST(request: Request) {
   try {
-    const { name, amount, type, date } = await request.json();
+    const body = (await request.json()) as PaymentCreateDTO;
 
-    if (!name || !amount || !type || !date) {
-      return apiResponse(400, `Faltan campos requeridos name: ${name}, amount: ${amount}, type: ${type}, date: ${date}`);
-    }
-
-    const mysqlDate =
-      typeof date === "string" ? date.split("T")[0] : null;
-
-    if (!mysqlDate || isNaN(new Date(mysqlDate).getTime())) {
-      return apiResponse(400, "Fecha inválida");
-    }
+    const { name, amount, mode_id, type_id, date } = body;
 
     const [result] = await pool.query<ResultSetHeader>(
-      "INSERT INTO pagos (name, amount, type, date) VALUES (?, ?, ?, ?)",
-      [name, amount, type, mysqlDate]
+      `INSERT INTO payments (name, amount, mode_id, type_id, date)
+        VALUES (?, ?, ?, ?, ?)`,
+      [name, amount, mode_id, type_id, date?.split("T")[0]]
     );
-    return apiResponse(201, "Pago registrado correctamente", {
-      id: result.insertId,
-    });
+
+    return apiResponse(201, "Pago creado correctamente", { id: result.insertId });
   } catch (error) {
-    console.error("Error en POST /pagos:", error);
-    return apiResponse(500, "Error interno del servidor");
+    console.error(error);
+    return apiResponse(500, "Error al crear pago");
   }
 }
 
 // ==================== GET (Read) ====================
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const [rows] = await pool.query<RowDataPacket[]>(
-      "SELECT * FROM pagos ORDER BY id DESC"
-    );
+    const { searchParams } = new URL(request.url);
+    const modeId = searchParams.get("mode_id") || 1;
+
+    const query = "SELECT * FROM payments WHERE mode_id = ?";
+    const values: number = Number(modeId);
+
+    const [rows] = await pool.query<RowDataPacket[]>(query, values);
 
     return apiResponse(200, "Pagos obtenidos correctamente", rows);
   } catch (error) {
-    console.error("Error en GET /pagos:", error);
-    return apiResponse(500, "Error interno del servidor");
+    console.error(error);
+    return apiResponse(500, "Error al obtener pagos");
   }
 }
 
