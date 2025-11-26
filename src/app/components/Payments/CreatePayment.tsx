@@ -10,6 +10,11 @@ import { PropsAlert, ShowAlert } from "../Common/AlertCmponent/AlertComponent";
 import { PaymentFormFields } from "@/types/paymentFormField";
 import { SyncOutlined } from "@ant-design/icons";
 
+const layout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 16 },
+};
+
 export default function CreatePayment({ modeId }: { modeId: number }) {
   const [types, setTypes] = useState<PaymentType[]>([]);
   const [loading, setLoading] = useState(false);
@@ -61,49 +66,52 @@ export default function CreatePayment({ modeId }: { modeId: number }) {
   };
 
   return (
-    <Form layout="vertical" onFinish={onFinish}>
-      {alert.show && (
-        <ShowAlert show status={alert.status} message={alert.message} />
-      )}
+    <section>
+      <h2 className="mb-6 font-bold">Registro de pago</h2>
+      <Form className="w-full items-center" {...layout} onFinish={onFinish} labelAlign="left" size="middle">
+        {alert.show && (
+          <ShowAlert show status={alert.status} message={alert.message} />
+        )}
 
-      <Form.Item<PaymentFormFields>
-        label="Nombre"
-        name="name"
-        rules={[{ required: true, message: "Por favor ingrese un nombre" }]}
-      >
-        <Input className="w-full" />
-      </Form.Item>
+        <Form.Item<PaymentFormFields>
+          label="Nombre"
+          name="name"
+          rules={[{ required: true, message: "Por favor ingrese un nombre" }]}
+        >
+          <Input />
+        </Form.Item>
 
-      <Form.Item 
-        name="amount" 
-        label="Monto" 
-        rules={[{ required: true, message: "Ingrese un monto" }]}>
-        <InputNumber className="w-full" />
-      </Form.Item>
+        <Form.Item 
+          name="amount" 
+          label="Monto" 
+          rules={[{ required: true, message: "Ingrese un monto" }]}>
+          <InputNumber className="w-full" />
+        </Form.Item>
 
-      <Form.Item 
-        name="type_id" 
-        label="Tipo" 
-        rules={[{ required: true, message: "Ingrese tipo de pago" }]}>
-        <Select
-          options={types.map(t => ({ label: t.name, value: t.id }))}
-        />
-      </Form.Item>
+        <Form.Item 
+          name="type_id" 
+          label="Tipo" 
+          rules={[{ required: true, message: "Ingrese tipo de pago" }]}>
+          <Select
+            options={types.map(t => ({ label: t.name, value: t.id }))}
+          />
+        </Form.Item>
 
-      <Form.Item 
-        name="date" 
-        label="Fecha" 
-        rules={[{ required: true, message: "Ingrese la fecha" }]}>
-        <DatePicker format="DD/MM/YYYY" className="w-full" />
-      </Form.Item>
+        <Form.Item 
+          name="date" 
+          label="Fecha" 
+          rules={[{ required: true, message: "Ingrese la fecha" }]}>
+          <DatePicker format="DD/MM/YYYY" className="w-full" />
+        </Form.Item>
 
-      <div className="mt-3 w-full text-center">
-        <Button
-          icon={loading && <SyncOutlined spin /> }
-          variant="solid" color="danger" htmlType="submit" loading={loading}>
-          Registrar pago
-        </Button>
-      </div>
-    </Form>
+        <div className="mt-3 w-full text-center">
+          <Button
+            icon={loading && <SyncOutlined spin /> }
+            variant="solid" color="danger" htmlType="submit" loading={loading}>
+            Registrar pago
+          </Button>
+        </div>
+      </Form>
+    </section>
   );
 }

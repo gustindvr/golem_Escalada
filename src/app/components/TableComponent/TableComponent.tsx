@@ -2,6 +2,7 @@
 
 import { Table } from "antd";
 import { useEffect, useState } from "react";
+import { dataClientColumns } from "./utils/columnsClients";
 
 export default function TableComponent({ modeId }: { modeId: number }) {
   const [data, setData] = useState([]);
@@ -16,11 +17,11 @@ export default function TableComponent({ modeId }: { modeId: number }) {
     <Table
       rowKey="id"
       dataSource={data}
-      columns={[
-        { title: "Cliente", dataIndex: "name" },
-        { title: "Monto", dataIndex: "amount" },
-        { title: "Fecha", dataIndex: "date" },
-      ]}
+      columns={dataClientColumns}
+      scroll={{ x: 320 }}
+      pagination={{
+        position: ["bottomCenter"],
+      }}
     />
   );
 }

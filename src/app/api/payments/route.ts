@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     const { name, amount, mode_id, type_id, date } = body;
 
     const [result] = await pool.query<ResultSetHeader>(
-      `INSERT INTO payments (name, amount, mode_id, type_id, date)
+      `INSERT INTO pagos (name, amount, mode_id, type_id, date)
         VALUES (?, ?, ?, ?, ?)`,
       [name, amount, mode_id, type_id, date?.split("T")[0]]
     );
@@ -30,7 +30,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const modeId = searchParams.get("mode_id") || 1;
 
-    const query = "SELECT * FROM payments WHERE mode_id = ?";
+    const query = "SELECT * FROM pagos WHERE mode_id = ?";
     const values: number = Number(modeId);
 
     const [rows] = await pool.query<RowDataPacket[]>(query, values);

@@ -41,7 +41,7 @@ export default function RootLayout({
         />
       </div>
 
-        <main className="pt-6 px-6">
+        <main className="pt-6 md:px-6">
           {children}
         </main>
         <Footer />
