@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import "./ShowAlert.css";
 
 export type PropsAlert = {
-  show: boolean;
+  show?: boolean;
   status: "success" | "error" | "warning";
   message: string;
   duration?: number;
