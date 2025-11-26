@@ -1,16 +1,20 @@
 import { pool } from "@/lib/db";
 import { apiResponse } from "@/utils/apiResponse";
+import { RowDataPacket } from "mysql2";
 
-export async function GET(modeId: number) {
+export async function GET(request: Request) {
   try {
-    const [rows] = await pool.query(
-  "SELECT id, name FROM payment_types WHERE mode_id = ?",
-  [modeId]
-);
+    const { searchParams } = new URL(request.url);
+    const modeId = searchParams.get("mode_id");
 
-    return apiResponse(200, "Tipos de pagos obtenidos correctamente", rows);
+    const [rows] = await pool.query<RowDataPacket[]>(
+      "SELECT * FROM payment_types WHERE mode_id = ?",
+      [Number(modeId)]
+    );
+
+    return apiResponse(200, "Tipos obtenidos", rows);
   } catch (error) {
-    console.error("Error en GET /payment_types:", error);
-    return apiResponse(500, "Error interno del servidor");
+    console.error(error);
+    return apiResponse(500, "Error al obtener tipos");
   }
 }

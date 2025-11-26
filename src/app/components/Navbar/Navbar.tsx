@@ -1,15 +1,20 @@
+"use client"
 import React, { useEffect, useState } from 'react';
 import { Menu, MenuProps } from 'antd';
 import { getModes } from '@/services/modes';
 import { Mode } from '@/types/modes';
+import { useRouter } from 'next/navigation';
 
 const Navbar = () => {
+  const router = useRouter();
   const [menuItems, setMenuItems] = useState<MenuProps["items"]>([]);
   const [current, setCurrent] = useState<string>("");
 
   const onClick: MenuProps['onClick'] = (e) => {
-    console.log('click ', e);
     setCurrent(e.key);
+    const formattedRoute = `/${e.key.toLowerCase().replace(" ", "-")}`
+    console.log(formattedRoute)
+    router.push(formattedRoute);
   };
 
   useEffect(() => {
@@ -22,7 +27,7 @@ const Navbar = () => {
       }
 
       const formatted = modes.map((mode: Mode) => ({
-        key: mode.id.toString(),
+        key: mode.name,
         label: mode.name,
       }));
 
