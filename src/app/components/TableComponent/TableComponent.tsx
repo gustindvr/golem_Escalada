@@ -1,35 +1,27 @@
-import { Table } from "antd"
-import { useEffect, useState } from "react"
-import { dataClientColumns } from "./utils/columnsClients"
+"use client";
 
-export interface Pagos {
-  id: number
-  client: string
-  amount: number
-  type: string
-  date: string
-};
+import { Table } from "antd";
+import { useEffect, useState } from "react";
+import { dataClientColumns } from "./utils/columnsClients";
 
-const TableComponent = () => {
-  const [pagos, setPagos] = useState<Pagos[]>([]);
-  
+export default function TableComponent({ modeId }: { modeId: number }) {
+  const [data, setData] = useState([]);
+
   useEffect(() => {
-    fetch("/api/payments")
+    fetch(`/api/payments?mode_id=${modeId}`)
       .then(res => res.json())
-      .then(data => setPagos(data.data))
-  }, [])
+      .then(json => setData(json.data));
+  }, [modeId]);
 
   return (
     <Table
-      dataSource={pagos}
-      columns={dataClientColumns}
       rowKey="id"
+      dataSource={data}
+      columns={dataClientColumns}
       scroll={{ x: 320 }}
       pagination={{
         position: ["bottomCenter"],
       }}
     />
-  )
+  );
 }
-
-export default TableComponent

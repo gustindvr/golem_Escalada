@@ -1,8 +1,8 @@
 import { TableProps } from "antd"
-import { Pagos } from "../TableComponent"
 import { formatAmount, formatDate } from "@/utils/commons"
+import { Payment } from "@/types/payments"
 
-export const dataClientColumns: TableProps<Pagos>['columns'] = [
+export const dataClientColumns: TableProps<Payment>['columns'] = [
   {
     title: "Nombre",
     dataIndex: "name",
