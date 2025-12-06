@@ -7,7 +7,7 @@ import "./ShowAlert.css";
 export type PropsAlert = {
   show?: boolean;
   status: "success" | "error" | "warning";
-  message: string;
+  title: string;
   duration?: number;
   onClose?: () => void;
 };
@@ -15,7 +15,7 @@ export type PropsAlert = {
 export const ShowAlert = ({
   show,
   status,
-  message,
+  title,
   duration = 5000,
   onClose,
 }: PropsAlert) => {
@@ -31,7 +31,7 @@ export const ShowAlert = ({
 
   return (
     <div className="alert-overlay">
-      <Alert type={status} message={message} showIcon />
+      <Alert type={status} title={title} showIcon />
     </div>
   );
 };

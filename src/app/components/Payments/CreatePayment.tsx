@@ -9,6 +9,7 @@ import { PaymentType } from "@/types/paymentsTypes";
 import { PropsAlert, ShowAlert } from "../Common/AlertCmponent/AlertComponent";
 import { PaymentFormFields } from "@/types/paymentFormField";
 import { SyncOutlined } from "@ant-design/icons";
+import { useRouter } from "next/navigation";
 
 const layout = {
   labelCol: { span: 4 },
@@ -16,12 +17,13 @@ const layout = {
 };
 
 export default function CreatePayment({ modeId }: { modeId: number }) {
+  const router = useRouter();
   const [types, setTypes] = useState<PaymentType[]>([]);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<PropsAlert>({
     show: false,
     status: "success",
-    message: "",
+    title: "",
   });
 
   useEffect(() => {
@@ -35,10 +37,13 @@ export default function CreatePayment({ modeId }: { modeId: number }) {
     date: { $d: Date };
   }) => {
     setLoading(true);
+    const [checkTypeName] = types.filter((t) => t.id === values.type_id);
+
     const dto: PaymentCreateDTO = {
       name: values.name,
       amount: values.amount,
       mode_id: modeId,
+      type: checkTypeName.name,
       type_id: values.type_id,
       date: values.date ? values.date.$d.toISOString() : null,
     };
@@ -49,20 +54,21 @@ export default function CreatePayment({ modeId }: { modeId: number }) {
       setAlert({
         show: true,
         status: "success",
-        message: "Registro creado con éxito",
+        title: "Registro creado con éxito",
       });
       setTimeout(() => setAlert((prev) => ({ ...prev, show: false })), 5000);
     }
-    } catch (error) {
-      setAlert({
+  } catch (error) {
+    setAlert({
         show: true,
         status: "error",
-        message: "Error al intentar crear el registro",
+        title: "Error al intentar crear el registro",
       });
       setTimeout(() => setAlert((prev) => ({ ...prev, show: false })), 5000);
       console.error(error);
     }
     setLoading(false)
+    router.refresh();
   };
 
   return (
@@ -70,7 +76,7 @@ export default function CreatePayment({ modeId }: { modeId: number }) {
       <h2 className="mb-6 font-bold">Registro de pago</h2>
       <Form className="w-full items-center" {...layout} onFinish={onFinish} labelAlign="left" size="middle">
         {alert.show && (
-          <ShowAlert show status={alert.status} message={alert.message} />
+          <ShowAlert show status={alert.status} title={alert.title} />
         )}
 
         <Form.Item<PaymentFormFields>

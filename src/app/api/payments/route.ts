@@ -9,12 +9,12 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json()) as PaymentCreateDTO;
 
-    const { name, amount, mode_id, type_id, date } = body;
+    const { name, amount, mode_id, type, type_id, date } = body;
 
     const [result] = await pool.query<ResultSetHeader>(
-      `INSERT INTO pagos (name, amount, mode_id, type_id, date)
-        VALUES (?, ?, ?, ?, ?)`,
-      [name, amount, mode_id, type_id, date?.split("T")[0]]
+      `INSERT INTO pagos (name, amount, mode_id, type, type_id, date)
+        VALUES (?, ?, ?, ?, ?, ?)`,
+      [name, amount, mode_id, type, type_id, date?.split("T")[0]]
     );
 
     return apiResponse(201, "Pago creado correctamente", { id: result.insertId });
@@ -30,7 +30,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const modeId = searchParams.get("mode_id") || 1;
 
-    const query = "SELECT * FROM pagos WHERE mode_id = ?";
+    const query = "SELECT * FROM pagos WHERE mode_id = ? order by id DESC";
     const values: number = Number(modeId);
 
     const [rows] = await pool.query<RowDataPacket[]>(query, values);

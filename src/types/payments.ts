@@ -11,6 +11,7 @@ export interface PaymentCreateDTO {
   name: string;
   amount: number;
   mode_id: number;
+  type: string;
   type_id: number;
   date: string | null;
 }
