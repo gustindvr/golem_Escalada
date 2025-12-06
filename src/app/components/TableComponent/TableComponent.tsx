@@ -20,7 +20,7 @@ export default function TableComponent({ modeId }: { modeId: number }) {
       columns={dataClientColumns}
       scroll={{ x: 320 }}
       pagination={{
-        position: ["bottomCenter"],
+        placement: ["bottomCenter"],
       }}
     />
   );
