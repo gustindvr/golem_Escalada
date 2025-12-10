@@ -1,7 +1,6 @@
 import { pool } from "@/lib/db";
 import { PaymentCreateDTO } from "@/types/payments";
 import { apiResponse } from "@/utils/apiResponse";
-import { ResultSetHeader, RowDataPacket } from 'mysql2';
 
 
 // ==================== POST (Create) ====================
@@ -11,13 +10,14 @@ export async function POST(request: Request) {
 
     const { name, amount, mode_id, type, type_id, date } = body;
 
-    const [result] = await pool.query<ResultSetHeader>(
-      `INSERT INTO pagos (name, amount, mode_id, type, type_id, date)
-        VALUES (?, ?, ?, ?, ?, ?)`,
-      [name, amount, mode_id, type, type_id, date?.split("T")[0]]
+    const result = await pool.query(
+      `INSERT INTO payments (name, amount, mode_id, type_id, date)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id`,
+      [name, amount, mode_id, type, type_id, date]
     );
-
-    return apiResponse(201, "Pago creado correctamente", { id: result.insertId });
+    const inserted = result.rows[0];
+    return apiResponse(201, "Pago creado correctamente", { id: inserted.id });
   } catch (error) {
     console.error(error);
     return apiResponse(500, "Error al crear pago");
@@ -28,16 +28,16 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const modeId = searchParams.get("mode_id") || 1;
+    const modeId = Number(searchParams.get("mode_id") ?? 1);
 
-    const query = "SELECT * FROM pagos WHERE mode_id = ? order by id DESC";
-    const values: number = Number(modeId);
-
-    const [rows] = await pool.query<RowDataPacket[]>(query, values);
+    const rows = await pool.query(
+      "SELECT * FROM pagos WHERE mode_id = ? ORDER BY id DESC",
+      [modeId]
+    );
 
     return apiResponse(200, "Pagos obtenidos correctamente", rows);
   } catch (error) {
-    console.error(error);
+    console.error("Error en GET /pagos:", error);
     return apiResponse(500, "Error al obtener pagos");
   }
 }
@@ -45,51 +45,63 @@ export async function GET(request: Request) {
 // ==================== PUT (Update) ====================
 export async function PUT(request: Request) {
   try {
-    const { id, name, amount, type, date } = await request.json();
+    const { id, name, amount, mode_id, type_id, date } = await request.json();
 
-    if (!id) return apiResponse(400, "ID requerido");
-    if (!name && !amount && !type && !date)
-      return apiResponse(400, "No hay campos para actualizar");
+    if (!id) {
+      return apiResponse(400, "ID requerido");
+    }
 
     const fields: string[] = [];
-    const values: (string | number)[] = [];
+    const values: unknown[] = [];
+    let idx = 1;
 
-    if (name) {
-      fields.push("name = ?");
+    if (name !== undefined) {
+      fields.push(`name = $${idx++}`);
       values.push(name);
     }
-    if (amount) {
-      fields.push("amount = ?");
+    if (amount !== undefined) {
+      fields.push(`amount = $${idx++}`);
       values.push(amount);
     }
-    if (type) {
-      fields.push("type = ?");
-      values.push(type);
+    if (mode_id !== undefined) {
+      fields.push(`mode_id = $${idx++}`);
+      values.push(mode_id);
     }
-    if (date) {
-      const mysqlDate =
-        typeof date === "string" ? date.split("T")[0] : null;
-      if (!mysqlDate || isNaN(new Date(mysqlDate).getTime())) {
+    if (type_id !== undefined) {
+      fields.push(`type_id = $${idx++}`);
+      values.push(type_id);
+    }
+    if (date !== undefined) {
+      const dateOnly = typeof date === "string"
+        ? date.split("T")[0]
+        : null;
+      if (!dateOnly || isNaN(new Date(dateOnly).getTime())) {
         return apiResponse(400, "Fecha inválida");
       }
-      fields.push("date = ?");
-      values.push(mysqlDate);
+      fields.push(`date = $${idx++}`);
+      values.push(dateOnly);
+    }
+
+    if (fields.length === 0) {
+      return apiResponse(400, "No hay campos para actualizar");
     }
 
     values.push(id);
+    const sql = `
+      UPDATE payments
+      SET ${fields.join(", ")}
+      WHERE id = $${idx}
+      RETURNING id
+    `;
 
-    const [result] = await pool.query<ResultSetHeader>(
-      `UPDATE pagos SET ${fields.join(", ")} WHERE id = ?`,
-      values
-    );
-
-    if (result.affectedRows === 0) {
+    const result = await pool.query(sql, values);
+    if (result.rowCount === 0) {
       return apiResponse(404, "Pago no encontrado");
     }
 
-    return apiResponse(200, "Pago actualizado correctamente");
+    return apiResponse(200, "Pago actualizado correctamente", { id: result.rows[0].id });
   } catch (error) {
-    console.error("Error en PUT /pagos:", error);
+    console.error("Error en PUT /payments:", error);
     return apiResponse(500, "Error interno del servidor");
   }
 }
@@ -98,21 +110,22 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const { id } = await request.json();
+    if (!id) {
+      return apiResponse(400, "ID requerido");
+    }
 
-    if (!id) return apiResponse(400, "ID requerido");
-
-    const [result] = await pool.query<ResultSetHeader>(
-      "DELETE FROM pagos WHERE id = ?",
+    const result = await pool.query(
+      "DELETE FROM payments WHERE id = $1 RETURNING id",
       [id]
     );
 
-    if (result.affectedRows === 0) {
+    if (result.rowCount === 0) {
       return apiResponse(404, "Pago no encontrado");
     }
 
-    return apiResponse(200, "Pago eliminado correctamente");
+    return apiResponse(200, "Pago eliminado correctamente", { id: result.rows[0].id });
   } catch (error) {
-    console.error("Error en DELETE /pagos:", error);
+    console.error("Error en DELETE /payments:", error);
     return apiResponse(500, "Error interno del servidor");
   }
 }

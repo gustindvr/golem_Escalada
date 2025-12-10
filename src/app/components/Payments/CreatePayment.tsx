@@ -71,6 +71,8 @@ export default function CreatePayment({ modeId }: { modeId: number }) {
     router.refresh();
   };
 
+  console.log("types", types);
+
   return (
     <section>
       <h2 className="mb-6 font-bold">Registro de pago</h2>
