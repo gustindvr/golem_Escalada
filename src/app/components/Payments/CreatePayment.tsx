@@ -5,9 +5,8 @@ import { registerPayment } from "@/services/payments";
 import { getPaymentTypes } from "@/services/paymentTypes";
 import { PaymentCreateDTO } from "@/types/payments";
 import { PaymentType } from "@/types/paymentsTypes";
-import { PropsAlert } from "../Common/AlertCmponent/AlertComponent";
-import { useRouter } from "next/navigation";
 import FormPayment from "./FormPayment";
+import { useAlert } from "@/app/hooks/useAlert";
 
 export type Values = {
   id: number;
@@ -18,14 +17,9 @@ export type Values = {
 }
 
 export default function CreatePayment({ modeId }: { modeId: number }) {
-  const router = useRouter();
+  const { showAlert } = useAlert();
   const [types, setTypes] = useState<PaymentType[]>([]);
   const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState<PropsAlert>({
-    show: false,
-    status: "success",
-    title: "",
-  });
 
   useEffect(() => {
     getPaymentTypes(modeId).then(setTypes);
@@ -44,32 +38,22 @@ export default function CreatePayment({ modeId }: { modeId: number }) {
 
     const res = await registerPayment(dto);
     if (res?.status === 201) {
-      setAlert({
-        show: true,
-        status: "success",
-        title: "Registro creado con éxito",
-      });
-      setTimeout(() => setAlert((prev) => ({ ...prev, show: false })), 5000);
+      showAlert({ status: "success", title: "Registro creado con éxito" });
     }
     if (res === null) {
-      setAlert({
-          show: true,
+      showAlert({
           status: "error",
           title: "Error al intentar crear el registro",
         });
-      setTimeout(() => setAlert((prev) => ({ ...prev, show: false })), 5000);
     }
-
     setLoading(false)
-    router.refresh();
   };
 
   return (
     <section>
       <h2 className="mb-6 font-bold">Registro de pago</h2>
       <FormPayment 
-        onFinish={(val: Values) => onFinish(val)} 
-        alert={alert} 
+        onFinish={(val: Values) => onFinish(val)}
         loading={loading} 
         types={types}
         type="create"

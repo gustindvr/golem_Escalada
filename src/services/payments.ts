@@ -50,7 +50,6 @@ export async function editPayment(
     });
 
     if (!res.ok) return null;
-
     return (await res.json()) as ApiResponse<{ id: number }>;
   } catch (error) {
     console.error(error);

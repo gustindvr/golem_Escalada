@@ -1,6 +1,5 @@
 import dayjs from "dayjs";
 import { Form, Input, InputNumber, DatePicker, Select, Button } from "antd";
-import { PropsAlert, ShowAlert } from '../Common/AlertCmponent/AlertComponent';
 import { PaymentType } from '@/types/paymentsTypes';
 import { Values } from './CreatePayment';
 import { Payment } from "@/types/payments";
@@ -13,14 +12,13 @@ const layout = {
 
 type Props = {
   onFinish: (val: Values) => void;
-  alert: PropsAlert;
   types: PaymentType[];
   loading: boolean;
   type: "create" | "edit";
   initialValues?: Payment;
 }
 
-const FormPayment = ({ onFinish, alert, types, loading, type, initialValues }: Props) => {
+const FormPayment = ({ onFinish, types, loading, type, initialValues }: Props) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -44,9 +42,6 @@ const FormPayment = ({ onFinish, alert, types, loading, type, initialValues }: P
       labelAlign="left"
       size="middle"
     >
-      {alert.show && (
-        <ShowAlert show status={alert.status} title={alert.title} />
-      )}
 
       <Form.Item
         label="Nombre"

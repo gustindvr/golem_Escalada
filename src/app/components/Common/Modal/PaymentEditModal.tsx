@@ -4,9 +4,9 @@ import FormPayment from "../../Payments/FormPayment";
 import { useEffect, useState } from "react";
 import { getPaymentTypes } from "@/services/paymentTypes";
 import { PaymentType } from "@/types/paymentsTypes";
-import { PropsAlert } from "../AlertCmponent/AlertComponent";
 import { Payment, PaymentEditDTO } from "@/types/payments";
 import { editPayment } from "@/services/payments";
+import { useAlert } from "@/app/hooks/useAlert";
 
 type Props = {
   visible: boolean;
@@ -17,13 +17,9 @@ type Props = {
 };
 
 export default function PaymentEditModal({ visible, initialValues, onClose, onSaved, modeId }: Props) {
+  const { showAlert } = useAlert();
   const [types, setTypes] = useState<PaymentType[]>([]);
   const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState<PropsAlert>({
-    show: false,
-    status: "success",
-    title: "",
-  });
 
   useEffect(() => {
     getPaymentTypes(modeId).then(setTypes);
@@ -43,32 +39,28 @@ export default function PaymentEditModal({ visible, initialValues, onClose, onSa
     };
 
     const res = await editPayment(dto);
-    if (res?.status === 201) {
-      setAlert({
-        show: true,
+
+    if (res?.status === 200) {
+      showAlert({
         status: "success",
-        title: "Registro creado con éxito",
+        title: res.message,
       });
-      setTimeout(() => setAlert((prev) => ({ ...prev, show: false })), 5000);
     }
     if (res === null) {
-      setAlert({
-          show: true,
+      showAlert({
           status: "error",
-          title: "Error al intentar crear el registro",
+          title: "Error al intentar editar el registro",
         });
-      setTimeout(() => setAlert((prev) => ({ ...prev, show: false })), 5000);
     }
 
     setLoading(false)
     onSaved();
   };
-
+  console.log(alert);
   return (
     <Modal open={visible} onCancel={onClose} title="Editar pago" footer={null}>
       <FormPayment
-        onFinish={(val: Values) => onFinish(val)} 
-        alert={alert} 
+        onFinish={(val: Values) => onFinish(val)}
         loading={loading} 
         types={types}
         type="edit"
