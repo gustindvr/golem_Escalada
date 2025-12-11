@@ -14,7 +14,7 @@ export const dataClientColumns: TableProps<Payment>['columns'] = [
     dataIndex: "amount",
     key: "amount",
     align: "center",
-    render: (amount) => formatAmount(amount)
+    render: (amount: number) => formatAmount(amount),
   },
   {
     title: "Tipo",
@@ -28,6 +28,6 @@ export const dataClientColumns: TableProps<Payment>['columns'] = [
     dataIndex: "date",
     key: "date",
     align: "center",
-    render: (date) => formatDate(date)
+    render: (date: string) => formatDate(date),
   },
 ]
