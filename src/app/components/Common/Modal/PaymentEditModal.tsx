@@ -1,24 +1,22 @@
-"use client";
-
+import { Modal} from "antd";
+import { Values } from "../../Payments/CreatePayment";
+import FormPayment from "../../Payments/FormPayment";
 import { useEffect, useState } from "react";
-import { registerPayment } from "@/services/payments";
 import { getPaymentTypes } from "@/services/paymentTypes";
-import { PaymentCreateDTO } from "@/types/payments";
 import { PaymentType } from "@/types/paymentsTypes";
-import { PropsAlert } from "../Common/AlertCmponent/AlertComponent";
-import { useRouter } from "next/navigation";
-import FormPayment from "./FormPayment";
+import { PropsAlert } from "../AlertCmponent/AlertComponent";
+import { Payment, PaymentEditDTO } from "@/types/payments";
+import { editPayment } from "@/services/payments";
 
-export type Values = {
-  id: number;
-  name: string;
-  amount: number;
-  type_id: number;
-  date: { $d: Date };
-}
+type Props = {
+  visible: boolean;
+  initialValues: Payment;
+  onClose(): void;
+  onSaved(): void;
+  modeId: number;
+};
 
-export default function CreatePayment({ modeId }: { modeId: number }) {
-  const router = useRouter();
+export default function PaymentEditModal({ visible, initialValues, onClose, onSaved, modeId }: Props) {
   const [types, setTypes] = useState<PaymentType[]>([]);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<PropsAlert>({
@@ -31,10 +29,12 @@ export default function CreatePayment({ modeId }: { modeId: number }) {
     getPaymentTypes(modeId).then(setTypes);
   }, [modeId]);
 
+
   const onFinish = async (values: Values) => {
     setLoading(true);
 
-    const dto: PaymentCreateDTO = {
+    const dto: PaymentEditDTO = {
+      id: initialValues.id,
       name: values.name,
       amount: values.amount,
       mode_id: modeId,
@@ -42,7 +42,7 @@ export default function CreatePayment({ modeId }: { modeId: number }) {
       date: values.date ? values.date.$d.toISOString() : null,
     };
 
-    const res = await registerPayment(dto);
+    const res = await editPayment(dto);
     if (res?.status === 201) {
       setAlert({
         show: true,
@@ -61,19 +61,19 @@ export default function CreatePayment({ modeId }: { modeId: number }) {
     }
 
     setLoading(false)
-    router.refresh();
+    onSaved();
   };
 
   return (
-    <section>
-      <h2 className="mb-6 font-bold">Registro de pago</h2>
-      <FormPayment 
+    <Modal open={visible} onCancel={onClose} title="Editar pago" footer={null}>
+      <FormPayment
         onFinish={(val: Values) => onFinish(val)} 
         alert={alert} 
         loading={loading} 
         types={types}
-        type="create"
+        type="edit"
+        initialValues={initialValues}
       />
-    </section>
+    </Modal>
   );
 }
