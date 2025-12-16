@@ -38,7 +38,10 @@ const FormPayment = ({ onFinish, types, loading, type, initialValues }: Props) =
     <Form
       form={form}
       {...layout}
-      onFinish={onFinish}
+      onFinish={(val) => {
+        onFinish(val);
+        form.resetFields(); 
+      }}
       labelAlign="left"
       size="middle"
     >

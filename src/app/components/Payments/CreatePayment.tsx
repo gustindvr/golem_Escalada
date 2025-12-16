@@ -16,7 +16,12 @@ export type Values = {
   date: { $d: Date };
 }
 
-export default function CreatePayment({ modeId }: { modeId: number }) {
+type Props = {
+  modeId: number;
+  refresh: () => void;
+}
+
+export default function CreatePayment({ modeId, refresh }: Props) {
   const { showAlert } = useAlert();
   const [types, setTypes] = useState<PaymentType[]>([]);
   const [loading, setLoading] = useState(false);
@@ -46,7 +51,8 @@ export default function CreatePayment({ modeId }: { modeId: number }) {
           title: "Error al intentar crear el registro",
         });
     }
-    setLoading(false)
+    setLoading(false);
+    refresh();
   };
 
   return (

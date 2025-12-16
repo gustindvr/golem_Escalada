@@ -1,23 +1,28 @@
 "use client";
 
-import { Space, Table } from "antd";
-import { useEffect, useState } from "react";
+import { Col, Input, Row, Space, Table } from "antd";
 import { dataClientColumns } from "./utils/columnsClients";
 import { Payment } from "@/types/payments";
 import { CloseOutlined, EditOutlined } from "@ant-design/icons";
 import { usePaymentRowActions } from "@/app/hooks/usePaymentRowAction";
 import ConfirmDeleteModal from "../Common/Modal/ConfirmDeleteModal";
 import PaymentEditModal from "../Common/Modal/PaymentEditModal";
+import { useState } from "react";
 
-export default function TableComponent({ modeId }: { modeId: number }) {
-  const [data, setData] = useState([]);
+type Props = {
+  modeId: number;
+  data: Payment[];
+  loading: boolean;
+  refresh: () => void;
+}
+
+export default function TableComponent({ modeId, data, loading, refresh }: Props) {
   const { selected, mode, openEdit, openDelete, close } = usePaymentRowActions();
+  const [searchText, setSearchText] = useState("");
 
-  useEffect(() => {
-    fetch(`/api/payments?mode_id=${modeId}`)
-      .then(res => res.json())
-      .then(json => setData(json.data));
-  }, [modeId]);
+  const filteredData = data.filter(item =>
+    item.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   const columns = dataClientColumns?.concat({
     title: "Acción",
@@ -33,14 +38,26 @@ export default function TableComponent({ modeId }: { modeId: number }) {
 
   return (
     <>
-      <Table
-        rowKey="id"
-        dataSource={data}
-        columns={columns}
-        scroll={{ x: 320 }}
-        pagination={{ placement: ["bottomCenter"] }}
-      />
+      <Col>
+        <Row>
+          <Input.Search
+            placeholder="Buscar por nombre…"
+            allowClear
+            onSearch={(value) => setSearchText(value)}
+            onChange={(e) => setSearchText(e.target.value)}
+            style={{ marginBottom: 5 }}
+          />
+        </Row>
 
+        <Table
+          rowKey="id"
+          dataSource={filteredData}
+          columns={columns}
+          scroll={{ x: 320 }}
+          pagination={{ placement: ["bottomCenter"] }}
+          loading={loading}
+          />
+      </Col>
       {mode === "edit" && selected && (
         <PaymentEditModal
           visible={true}
@@ -48,6 +65,7 @@ export default function TableComponent({ modeId }: { modeId: number }) {
           onClose={close}
           onSaved={() => close()}
           modeId={modeId}
+          refresh={refresh}
         />
       )}
 
@@ -58,6 +76,7 @@ export default function TableComponent({ modeId }: { modeId: number }) {
           onClose={close}
           onDeleted={() => close()}
           selected={selected}
+          refresh={refresh}
         />
       )}
     </>

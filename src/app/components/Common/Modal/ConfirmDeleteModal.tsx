@@ -9,16 +9,17 @@ type Props = {
   onClose(): void;
   onDeleted(): void;
   selected: Payment | null;
+  refresh: () => void;
 };
 
-export default function ConfirmDeleteModal({ visible, payment, onClose, onDeleted, selected }: Props) {
+export default function ConfirmDeleteModal({ visible, payment, onClose, onDeleted, selected, refresh }: Props) {
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>()
-
 
   const handleDelete = async () => {
     if (selectedPayment?.id) {
       await deletePayment({ id: selectedPayment?.id });
       onDeleted();
+      refresh();
     }
   };
 

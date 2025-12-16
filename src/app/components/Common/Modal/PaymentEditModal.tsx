@@ -14,9 +14,10 @@ type Props = {
   onClose(): void;
   onSaved(): void;
   modeId: number;
+  refresh: () => void;
 };
 
-export default function PaymentEditModal({ visible, initialValues, onClose, onSaved, modeId }: Props) {
+export default function PaymentEditModal({ visible, initialValues, onClose, onSaved, modeId, refresh }: Props) {
   const { showAlert } = useAlert();
   const [types, setTypes] = useState<PaymentType[]>([]);
   const [loading, setLoading] = useState(false);
@@ -52,7 +53,7 @@ export default function PaymentEditModal({ visible, initialValues, onClose, onSa
           title: "Error al intentar editar el registro",
         });
     }
-
+    refresh();
     setLoading(false)
     onSaved();
   };
