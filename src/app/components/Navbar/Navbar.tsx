@@ -13,7 +13,6 @@ const Navbar = () => {
   const onClick: MenuProps['onClick'] = (e) => {
     setCurrent(e.key);
     const formattedRoute = `/${e.key.toLowerCase().replace(" ", "-")}`
-    console.log(formattedRoute)
     router.push(formattedRoute);
   };
 
