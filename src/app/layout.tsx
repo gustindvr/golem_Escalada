@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import { Image } from "antd";
+import { AlertProvider } from "./context/AlertContext";
+import AlertContainer from "./components/Common/Alert/AlertContainer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,7 +47,10 @@ export default function RootLayout({
       </div>
 
         <main className="pt-6 md:px-6">
-          {children}
+          <AlertProvider>
+            <AlertContainer />
+            {children}
+          </AlertProvider>
         </main>
         <Footer />
       </body>

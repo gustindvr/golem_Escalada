@@ -1,27 +1,23 @@
-"use client";
-
+import { Modal} from "antd";
+import { Values } from "../../Payments/CreatePayment";
+import FormPayment from "../../Payments/FormPayment";
 import { useEffect, useState } from "react";
-import { registerPayment } from "@/services/payments";
 import { getPaymentTypes } from "@/services/paymentTypes";
-import { PaymentCreateDTO } from "@/types/payments";
 import { PaymentType } from "@/types/paymentsTypes";
-import FormPayment from "./FormPayment";
+import { Payment, PaymentEditDTO } from "@/types/payments";
+import { editPayment } from "@/services/payments";
 import { useAlert } from "@/app/hooks/useAlert";
 
-export type Values = {
-  id: number;
-  name: string;
-  amount: number;
-  type_id: number;
-  date: { $d: Date };
-}
-
 type Props = {
+  visible: boolean;
+  initialValues: Payment;
+  onClose(): void;
+  onSaved(): void;
   modeId: number;
   refresh: () => void;
-}
+};
 
-export default function CreatePayment({ modeId, refresh }: Props) {
+export default function PaymentEditModal({ visible, initialValues, onClose, onSaved, modeId, refresh }: Props) {
   const { showAlert } = useAlert();
   const [types, setTypes] = useState<PaymentType[]>([]);
   const [loading, setLoading] = useState(false);
@@ -30,10 +26,12 @@ export default function CreatePayment({ modeId, refresh }: Props) {
     getPaymentTypes(modeId).then(setTypes);
   }, [modeId]);
 
+
   const onFinish = async (values: Values) => {
     setLoading(true);
 
-    const dto: PaymentCreateDTO = {
+    const dto: PaymentEditDTO = {
+      id: initialValues.id,
       name: values.name,
       amount: values.amount,
       mode_id: modeId,
@@ -41,29 +39,34 @@ export default function CreatePayment({ modeId, refresh }: Props) {
       date: values.date ? values.date.$d.toISOString() : null,
     };
 
-    const res = await registerPayment(dto);
-    if (res?.status === 201) {
-      showAlert({ status: "success", title: "Registro creado con éxito" });
+    const res = await editPayment(dto);
+
+    if (res?.status === 200) {
+      showAlert({
+        status: "success",
+        title: res.message,
+      });
     }
     if (res === null) {
       showAlert({
           status: "error",
-          title: "Error al intentar crear el registro",
+          title: "Error al intentar editar el registro",
         });
     }
-    setLoading(false);
     refresh();
+    setLoading(false)
+    onSaved();
   };
-
+  console.log(alert);
   return (
-    <section>
-      <h2 className="mb-6 font-bold">Registro de pago</h2>
-      <FormPayment 
+    <Modal open={visible} onCancel={onClose} title="Editar pago" footer={null}>
+      <FormPayment
         onFinish={(val: Values) => onFinish(val)}
         loading={loading} 
         types={types}
-        type="create"
+        type="edit"
+        initialValues={initialValues}
       />
-    </section>
+    </Modal>
   );
 }

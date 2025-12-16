@@ -8,13 +8,13 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json()) as PaymentCreateDTO;
 
-    const { name, amount, mode_id, type, type_id, date } = body;
+    const { name, amount, mode_id, type_id, date } = body;
 
     const result = await pool.query(
       `INSERT INTO payments (name, amount, mode_id, type_id, date)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING id`,
-      [name, amount, mode_id, type, type_id, date]
+      [name, amount, mode_id, type_id, date]
     );
     const inserted = result.rows[0];
     return apiResponse(201, "Pago creado correctamente", { id: inserted.id });
@@ -30,14 +30,28 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const modeId = Number(searchParams.get("mode_id") ?? 1);
 
-    const rows = await pool.query(
-      "SELECT * FROM pagos WHERE mode_id = ? ORDER BY id DESC",
-      [modeId]
-    );
+    const sql = `
+      SELECT
+        p.id,
+        p.name,
+        p.amount,
+        p.date,
+        p.mode_id,
+        p.type_id,
+        pt.name AS type
+      FROM payments p
+      JOIN payment_types pt
+        ON p.type_id = pt.id
+      WHERE p.mode_id = $1
+      ORDER BY p.id DESC
+    `;
+
+    const result = await pool.query(sql, [modeId]);
+    const rows = result.rows;
 
     return apiResponse(200, "Pagos obtenidos correctamente", rows);
   } catch (error) {
-    console.error("Error en GET /pagos:", error);
+    console.error("Error en GET /payments:", error);
     return apiResponse(500, "Error al obtener pagos");
   }
 }
