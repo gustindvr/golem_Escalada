@@ -24,7 +24,7 @@ API Routes de Next.js
 
 Node.js
 
-MySQL (mysql2/promise)
+Postgres (PL)
 
 ### Características Principales
 
