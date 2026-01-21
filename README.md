@@ -24,7 +24,7 @@ API Routes de Next.js
 
 Node.js
 
-Postgres (PL)
+PostgreSQL (PL)
 
 ### Características Principales
 
