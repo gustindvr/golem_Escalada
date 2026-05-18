@@ -10,7 +10,7 @@ export async function POST(request: Request) {
 
     const { name, amount, mode_id, type_id, date } = body;
 
-    const result = await pool.query(
+    const result = await pool().query(
       `INSERT INTO payments (name, amount, mode_id, type_id, date)
         VALUES ($1, $2, $3, $4, $5)
         RETURNING id`,
@@ -46,7 +46,7 @@ export async function GET(request: Request) {
       ORDER BY p.id DESC
     `;
 
-    const result = await pool.query(sql, [modeId]);
+    const result = await pool().query(sql, [modeId]);
     const rows = result.rows;
 
     return apiResponse(200, "Pagos obtenidos correctamente", rows);
@@ -108,7 +108,7 @@ export async function PUT(request: Request) {
       RETURNING id
     `;
 
-    const result = await pool.query(sql, values);
+    const result = await pool().query(sql, values);
     if (result.rowCount === 0) {
       return apiResponse(404, "Pago no encontrado");
     }
@@ -128,7 +128,7 @@ export async function DELETE(request: Request) {
       return apiResponse(400, "ID requerido");
     }
 
-    const result = await pool.query(
+    const result = await pool().query(
       "DELETE FROM payments WHERE id = $1 RETURNING id",
       [id]
     );

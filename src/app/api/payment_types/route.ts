@@ -6,7 +6,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const modeId = searchParams.get("mode_id");
 
-    const rows = await pool.query(
+    const rows = await pool().query(
       "SELECT * FROM payment_types WHERE mode_id = $1",
       [Number(modeId)]
     );

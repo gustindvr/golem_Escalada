@@ -10,7 +10,7 @@ export async function POST() {
     const currentMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, "0")}`;
 
     // 2) Chequear en la tabla si ya se hizo backup
-    const { rows } = await pool.query(
+    const { rows } = await pool().query(
       "SELECT 1 FROM monthly_backups WHERE month = $1",
       [currentMonth]
     );
@@ -19,7 +19,7 @@ export async function POST() {
     }
 
     // 3) Traer todos los pagos
-    const result = await pool.query("SELECT * FROM payments");
+    const result = await pool().query("SELECT * FROM payments");
     const payments = result.rows;
 
     // 4) Limpiar primero (para no pasarnos del free tier)
@@ -38,13 +38,13 @@ export async function POST() {
     }
 
     // 6) Marcar en la DB que hicimos backup
-    await pool.query(
+    await pool().query(
       "INSERT INTO monthly_backups (month) VALUES ($1)",
       [currentMonth]
     );
 
     // 7) Borrar pagos
-    await pool.query("DELETE FROM payments");
+    await pool().query("DELETE FROM payments");
 
     return NextResponse.json({ success: true, month: currentMonth });
   } catch (err) {
