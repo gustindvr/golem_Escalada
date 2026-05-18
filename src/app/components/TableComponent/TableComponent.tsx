@@ -20,7 +20,7 @@ export default function TableComponent({ modeId, data, loading, refresh }: Props
   const { selected, mode, openEdit, openDelete, close } = usePaymentRowActions();
   const [searchText, setSearchText] = useState("");
 
-  const filteredData = data.filter(item =>
+  const filteredData = data?.filter(item =>
     item.name.toLowerCase().includes(searchText.toLowerCase())
   );
 

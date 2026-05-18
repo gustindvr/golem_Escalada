@@ -13,9 +13,10 @@ export function usePayments(modeId: number) {
 
   const fetchPayments = useCallback(async () => {
     setState({ data: [], loading: true });
-
+    console.log("Fetching payments for modeId:", modeId);
     try {
       const res = await fetch(`/api/payments?mode_id=${modeId}`);
+      console.log(res);
       const json = await res.json();
       setState({ data: json.data, loading: false });
     } catch (error) {

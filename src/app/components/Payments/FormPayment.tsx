@@ -66,7 +66,7 @@ const FormPayment = ({ onFinish, types, loading, type, initialValues }: Props) =
         label="Tipo" 
         rules={[{ required: true, message: "Ingrese tipo de pago" }]}>
         <Select
-          options={types.map(t => ({ label: t.name, value: t.id }))}
+          options={types?.map(t => ({ label: t.name, value: t.id }))}
         />
       </Form.Item>
 

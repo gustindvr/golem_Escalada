@@ -7,17 +7,20 @@ import DownloadButton from "../Common/Buttons/DownloadButton/DownloadButton";
 import { useEffect } from "react";
 
 export default function PaymentsView({ modeId, title }: { modeId: number; title: string }) {
+  console.log("Mode ID en PaymentsView:", modeId);
   const { data, refresh, loading } = usePayments(modeId);
-
+  console.log("Datos obtenidos en PaymentsView:", data);
   useEffect(() => {
     const doBackup = async () => {
       try {
         await fetch("/api/payments/backupMonthly", { method: "POST" });
+        console.log("Entra en el try")
       } catch (err) {
+        console.log("Sale por el catch")
         console.error("Error en backup mensual:", err);
       }
     };
-
+    console.log("Entra a hacer el backup mensual");
     doBackup();
   }, []);
   

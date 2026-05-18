@@ -11,7 +11,7 @@ export async function cleanOldFiles(bucket: string, maxFiles = 12) {
   if (error || !files) return;
 
   // ordenamos por nombre (asumiendo formato YYYY-MM.json)
-  const sorted = files.sort((a, b) => a.name.localeCompare(b.name));
+  const sorted = files?.sort((a, b) => a.name.localeCompare(b.name)) || [];
 
   const totalFiles = sorted.length;
 
