@@ -1,8 +1,11 @@
 import { supabaseStorage } from "@/utils/supabaseStorageHelpers";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: Request, { params }: { params: { month: string } }) {
-  const { month } = params;
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<{ month: string }> }
+) {
+  const { month } = await context.params;
   const { data, error } = await supabaseStorage
     .storage
     .from("historicos")
