@@ -1,7 +1,7 @@
 import { supabaseStorage } from "./supabaseStorageHelpers";
 
 
-export async function cleanOldFiles(bucket: string, maxFiles = 12) {
+export async function cleanOldFiles(bucket: string, maxFiles = 5) {
   // listamos todos los archivos
   const { data: files, error } = await supabaseStorage
     .storage
