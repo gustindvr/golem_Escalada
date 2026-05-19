@@ -1,8 +1,10 @@
-import { redirect } from "next/navigation";
+import Navbar from "./components/Navbar/Navbar";
+import Principal from "./principal/page";
 
 export default function Home() {
-
   return (
-      redirect("/muro-libre")
-  )
+    <>
+      <Principal />
+    </>
+  );
 }
