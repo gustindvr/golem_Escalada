@@ -12,6 +12,7 @@ export type Values = {
   id: number;
   name: string;
   amount: number;
+  mode_id: number;
   type_id: number;
   date: { $d: Date };
   description?: string;

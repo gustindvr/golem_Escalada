@@ -61,6 +61,7 @@ export default function PaymentEditModal({ visible, initialValues, onClose, onSa
   return (
     <Modal open={visible} onCancel={onClose} title="Editar pago" footer={null}>
       <FormPayment
+        modeId={modeId}
         onFinish={(val: Values) => onFinish(val)}
         loading={loading} 
         types={types}
