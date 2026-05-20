@@ -14,6 +14,7 @@ export type Values = {
   amount: number;
   type_id: number;
   date: { $d: Date };
+  description?: string;
 }
 
 type Props = {
@@ -32,13 +33,14 @@ export default function CreatePayment({ modeId, refresh }: Props) {
 
   const onFinish = async (values: Values) => {
     setLoading(true);
-
+    console.log(values)
     const dto: PaymentCreateDTO = {
       name: values.name,
       amount: values.amount,
       mode_id: modeId,
       type_id: values.type_id,
       date: values.date ? values.date.$d.toISOString() : null,
+      description: values.description ? values.description : null,
     };
 
     const res = await registerPayment(dto);
@@ -59,6 +61,7 @@ export default function CreatePayment({ modeId, refresh }: Props) {
     <section>
       <h2 className="mb-6 font-bold">Registro de pago</h2>
       <FormPayment 
+        modeId={modeId}
         onFinish={(val: Values) => onFinish(val)}
         loading={loading} 
         types={types}

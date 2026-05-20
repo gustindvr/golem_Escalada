@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect, useCallback } from "react";
-import { Payment } from "@/types/payments";
+import { Payment, PaymentEvent } from "@/types/payments";
 
 export function usePayments(modeId: number) {
   const [state, setState] = useState<{
@@ -11,17 +11,26 @@ export function usePayments(modeId: number) {
     loading: false,
   });
 
+  const [stateEvent, setStateEvent] = useState<{
+    data: PaymentEvent[];
+    loading: boolean;
+  }>({
+    data: [],
+    loading: false,
+  });
+
   const fetchPayments = useCallback(async () => {
     setState({ data: [], loading: true });
-    console.log("Fetching payments for modeId:", modeId);
+    setStateEvent({ data: [], loading: true });
     try {
       const res = await fetch(`/api/payments?mode_id=${modeId}`);
-      console.log(res);
       const json = await res.json();
+      modeId === 4 ? setStateEvent({ data: json.data, loading: false }) :
       setState({ data: json.data, loading: false });
     } catch (error) {
       console.error("Error al traer pagos:", error);
       setState({ data: [], loading: false });
+      setStateEvent({ data: [], loading: false });
     }
   }, [modeId]);
 
@@ -31,7 +40,9 @@ export function usePayments(modeId: number) {
 
   return {
     data: state.data,
+    dataEvent: stateEvent.data,
     loading: state.loading,
+    loadingEvent: stateEvent.loading,
     refresh: fetchPayments,
   };
 }

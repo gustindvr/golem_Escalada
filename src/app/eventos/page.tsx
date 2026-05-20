@@ -1,9 +1,6 @@
 import React from 'react'
+import PaymentsView from '../components/Payments/PaymentsView';
 
-const Cursos = () => {
-  return (
-    <div>Cursos</div>
-  )
+export default function Page() {
+    return <PaymentsView modeId={4} title="Eventos" />;
 }
-
-export default Cursos

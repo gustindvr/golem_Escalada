@@ -8,13 +8,13 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json()) as PaymentCreateDTO;
 
-    const { name, amount, mode_id, type_id, date } = body;
+    const { name, amount, mode_id, type_id, date, description } = body;
 
     const result = await pool().query(
-      `INSERT INTO payments (name, amount, mode_id, type_id, date)
-        VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO payments (name, amount, mode_id, type_id, date, description)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id`,
-      [name, amount, mode_id, type_id, date]
+      [name, amount, mode_id, type_id, date, description]
     );
     const inserted = result.rows[0];
     return apiResponse(201, "Pago creado correctamente", { id: inserted.id });
@@ -38,6 +38,7 @@ export async function GET(request: Request) {
         p.date,
         p.mode_id,
         p.type_id,
+        p.description,
         pt.name AS type
       FROM payments p
       JOIN payment_types pt

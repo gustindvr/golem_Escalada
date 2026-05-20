@@ -2,7 +2,7 @@ import { Divider } from "antd"
 
 export default function Principal() {
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center mb-10">
       <h3 className="text-4xl">DIAS Y HORARIOS</h3>
       <Divider />
       <div className="flex flex-col text-center align-center">

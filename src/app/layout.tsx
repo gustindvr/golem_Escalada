@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import { AlertProvider } from "./context/AlertContext";
+import { AuthProvider } from "./context/AuthContext";
 import AlertContainer from "./components/Common/Alert/AlertContainer";
 import "./globals.css";
 
@@ -35,23 +36,25 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         cz-shortcut-listen="true"
       >
-        <Navbar />
+        <AuthProvider>
+          <Navbar />
 
-        <div className="flex justify-center items-center w-full">
-          <img
-            src="/Logo.png"
-            alt="Logo Golem Escalada"
-            className="max-w-96"
-          />
-        </div>
+          <div className="flex justify-center items-center w-full">
+            <img
+              src="/Logo.png"
+              alt="Logo Golem Escalada"
+              className="max-w-96"
+            />
+          </div>
 
-        <main className="pt-6 md:px-6">
-          <AlertProvider>
-            <AlertContainer />
-            {children}
-          </AlertProvider>
-        </main>
-        <Footer />
+          <main className="pt-6 md:px-6">
+            <AlertProvider>
+              <AlertContainer />
+              {children}
+            </AlertProvider>
+          </main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

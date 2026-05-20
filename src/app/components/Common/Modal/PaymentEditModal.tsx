@@ -57,7 +57,7 @@ export default function PaymentEditModal({ visible, initialValues, onClose, onSa
     setLoading(false)
     onSaved();
   };
-  console.log(alert);
+
   return (
     <Modal open={visible} onCancel={onClose} title="Editar pago" footer={null}>
       <FormPayment

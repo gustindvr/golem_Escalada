@@ -5,9 +5,11 @@ import TableComponent from "../TableComponent/TableComponent";
 import { usePayments } from "@/app/hooks/usePayments";
 import DownloadButton from "../Common/Buttons/DownloadButton/DownloadButton";
 import { useEffect } from "react";
+import TableComponentEvents from "../TableComponent/TableComponentEvents";
 
 export default function PaymentsView({ modeId, title }: { modeId: number; title: string }) {
-  const { data, refresh, loading } = usePayments(modeId);
+  const { data, dataEvent, refresh, loading, loadingEvent } = usePayments(modeId);
+  console.log(dataEvent)
   useEffect(() => {
     const doBackup = async () => {
       try {
@@ -27,7 +29,13 @@ export default function PaymentsView({ modeId, title }: { modeId: number; title:
         <div className="bg-neutral-100 p-4 lg:p-12 rounded-md h-fit">
           <CreatePayment modeId={modeId} refresh={refresh} />
         </div>
-        <TableComponent modeId={modeId} data={data} refresh={refresh} loading={loading} />
+        {
+          modeId === 4 ? (
+            <TableComponentEvents data={dataEvent} loading={loadingEvent} />
+          ) : (
+            <TableComponent modeId={modeId} data={data} refresh={refresh} loading={loading} />
+          )
+        }
       </div>
       <div>
         <DownloadButton />

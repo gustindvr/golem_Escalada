@@ -11,6 +11,7 @@ const layout = {
 };
 
 type Props = {
+  modeId: number;
   onFinish: (val: Values) => void;
   types: PaymentType[];
   loading: boolean;
@@ -18,7 +19,7 @@ type Props = {
   initialValues?: Payment;
 }
 
-const FormPayment = ({ onFinish, types, loading, type, initialValues }: Props) => {
+const FormPayment = ({ modeId, onFinish, types, loading, type, initialValues }: Props) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -28,6 +29,7 @@ const FormPayment = ({ onFinish, types, loading, type, initialValues }: Props) =
         amount: initialValues.amount,
         type_id: initialValues.type_id,
         date: initialValues.date ? dayjs(initialValues.date) : null,
+        description: initialValues.description ? initialValues.description : null,
       });
     } else {
       form.resetFields();
@@ -76,6 +78,15 @@ const FormPayment = ({ onFinish, types, loading, type, initialValues }: Props) =
         rules={[{ required: true, message: "Ingrese la fecha" }]}>
         <DatePicker format="DD/MM/YYYY" className="w-full" />
       </Form.Item>
+
+      {modeId === 4 && (
+        <Form.Item 
+          name="description"
+          label="Descripción"
+        >
+          <Input placeholder="Charla indumentaria / Barker" />
+        </Form.Item>
+      )}
 
       <div className="mt-3 w-full text-center">
         <Button

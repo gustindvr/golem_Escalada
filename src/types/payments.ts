@@ -5,6 +5,7 @@ export interface Payment {
   mode_id: number;
   type_id: number;
   date: string;
+  description?: string | null;
 }
 
 export interface PaymentCreateDTO {
@@ -13,6 +14,7 @@ export interface PaymentCreateDTO {
   mode_id: number;
   type_id: number;
   date: string | null;
+  description?: string | null;
 }
 
 export interface PaymentDeleteDTO {
@@ -26,4 +28,14 @@ export interface PaymentEditDTO {
   mode_id: number;
   type_id: number;
   date: string | null;
+}
+
+export interface PaymentEvent {
+  id: number;
+  name: string;
+  amount: number;
+  mode_id: number;
+  type: string;
+  date: string;
+  description: string;
 }
