@@ -1,14 +1,20 @@
-import { supabaseStorage } from "@/utils/supabaseStorageHelpers";
+import { supabaseStorageAdmin } from "@/utils/supabaseStorageHelpers";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const { data, error } = await supabaseStorage
+  if (!supabaseStorageAdmin) {
+    return NextResponse.json({ error: "Supabase admin client no configurado" }, { status: 500 });
+  }
+
+  const { data, error } = await supabaseStorageAdmin
     .storage
     .from("historicos")
     .list("");
 
-  if (error || !data) return NextResponse.json([], { status: 500 });
+  if (error || !data) {
+    return NextResponse.json([], { status: 500 });
+  }
 
-  const months = data.map(f => f.name.replace(".json",""));
+  const months = data.map((f) => f.name.replace(".json", ""));
   return NextResponse.json(months);
 }

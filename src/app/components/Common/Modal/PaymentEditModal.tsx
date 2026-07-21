@@ -37,6 +37,8 @@ export default function PaymentEditModal({ visible, initialValues, onClose, onSa
       mode_id: modeId,
       type_id: values.type_id,
       date: values.date ? values.date.$d.toISOString() : null,
+      payment_method: values.payment_method ?? null,
+      paid: values.paid ?? false,
     };
 
     const res = await editPayment(dto);

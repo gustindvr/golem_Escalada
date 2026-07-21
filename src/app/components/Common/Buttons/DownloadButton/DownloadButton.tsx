@@ -1,3 +1,4 @@
+import { getBackupList } from "@/utils/commons";
 import { Button, Row, Select, Space } from "antd";
 import { useEffect, useState } from "react";
 
@@ -6,9 +7,15 @@ export default function DownloadButton() {
   const [selected, setSelected] = useState("");
 
   useEffect(() => {
-    fetch("/api/payments/backupList")
-      .then(res => res.json())
-      .then(setMonths);
+    try {
+      const fetchBackupList = async () => {
+        const response = await getBackupList();
+        setMonths(response);
+      };
+      fetchBackupList();
+    } catch (error) {
+      console.error("Error fetching backup list:", error);
+    }
   }, []);
 
   const download = () => {
@@ -21,7 +28,7 @@ export default function DownloadButton() {
         <Select
           size="middle"
           placeholder="Seleccione el Mes"
-          onChange={e => setSelected(e.target.value)} 
+          onChange={e => setSelected(e)} 
           options={months.map(m => ({ label: m, value: m }))}
         />
       </Row>

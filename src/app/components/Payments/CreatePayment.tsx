@@ -15,6 +15,8 @@ export type Values = {
   mode_id: number;
   type_id: number;
   date: { $d: Date };
+  payment_method?: string;
+  paid?: boolean;
   description?: string;
 }
 
@@ -41,6 +43,8 @@ export default function CreatePayment({ modeId, refresh }: Props) {
       mode_id: modeId,
       type_id: values.type_id,
       date: values.date ? values.date.$d.toISOString() : null,
+      payment_method: values.payment_method ?? null,
+      paid: values.paid ?? false,
       description: values.description ? values.description : null,
     };
 

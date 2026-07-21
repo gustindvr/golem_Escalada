@@ -9,17 +9,31 @@ import TableComponentEvents from "../TableComponent/TableComponentEvents";
 
 export default function PaymentsView({ modeId, title }: { modeId: number; title: string }) {
   const { data, dataEvent, refresh, loading, loadingEvent } = usePayments(modeId);
-  console.log(dataEvent)
+
   useEffect(() => {
     const doBackup = async () => {
       try {
-        await fetch("/api/payments/backupMonthly", { method: "POST" });
+        const now = new Date();
+        if (now.getDate() !== 1) {
+          return;
+        }
+
+        console.log("[PaymentsView] Starting monthly backup...");
+        const res = await fetch("/api/payments/backupMonthly", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ modeId }),
+        });
+        console.log("[PaymentsView] backupMonthly status:", res.status);
+        const body = await res.text();
+        console.log("[PaymentsView] backupMonthly body:", body);
       } catch (err) {
-        console.error("Error en backup mensual:", err);
+        console.error("[PaymentsView] Error en backup mensual:", err);
       }
     };
-    doBackup();
-  }, []);
+
+    void doBackup();
+  }, [modeId]);
   
   return (
     <div className="p-4">

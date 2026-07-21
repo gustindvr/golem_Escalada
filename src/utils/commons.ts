@@ -8,3 +8,9 @@ export const formatAmount = (value: number) =>
     style: "currency",
     currency: "ARS",
   }).format(value);
+
+export const getBackupList = async () => {
+  const response = await fetch("/api/payments/backupList");
+  const data = await response.json();
+  return data;
+};

@@ -8,13 +8,20 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json()) as PaymentCreateDTO;
 
-    const { name, amount, mode_id, type_id, date, description } = body;
+    const { name, amount, mode_id, type_id, date, payment_method, paid, description } = body;
+    const shouldUsePaid = Number(mode_id) === 3;
 
     const result = await pool().query(
-      `INSERT INTO payments (name, amount, mode_id, type_id, date, description)
-        VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING id`,
-      [name, amount, mode_id, type_id, date, description]
+      shouldUsePaid
+        ? `INSERT INTO payments (name, amount, mode_id, type_id, date, payment_method, paid, description)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+           RETURNING id`
+        : `INSERT INTO payments (name, amount, mode_id, type_id, date, payment_method, description)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)
+           RETURNING id`,
+      shouldUsePaid
+        ? [name, amount, mode_id, type_id, date, payment_method ?? null, paid ?? false, description ?? null]
+        : [name, amount, mode_id, type_id, date, payment_method ?? null, description ?? null]
     );
     const inserted = result.rows[0];
     return apiResponse(201, "Pago creado correctamente", { id: inserted.id });
@@ -38,6 +45,8 @@ export async function GET(request: Request) {
         p.date,
         p.mode_id,
         p.type_id,
+        p.payment_method,
+        p.paid,
         p.description,
         pt.name AS type
       FROM payments p
@@ -60,7 +69,8 @@ export async function GET(request: Request) {
 // ==================== PUT (Update) ====================
 export async function PUT(request: Request) {
   try {
-    const { id, name, amount, mode_id, type_id, date } = await request.json();
+    const { id, name, amount, mode_id, type_id, date, payment_method, paid } = await request.json();
+    const shouldUsePaid = Number(mode_id) === 3;
 
     if (!id) {
       return apiResponse(400, "ID requerido");
@@ -95,6 +105,14 @@ export async function PUT(request: Request) {
       }
       fields.push(`date = $${idx++}`);
       values.push(dateOnly);
+    }
+    if (payment_method !== undefined) {
+      fields.push(`payment_method = $${idx++}`);
+      values.push(payment_method ?? null);
+    }
+    if (shouldUsePaid && paid !== undefined) {
+      fields.push(`paid = $${idx++}`);
+      values.push(paid);
     }
 
     if (fields.length === 0) {

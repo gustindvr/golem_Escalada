@@ -1,9 +1,14 @@
-import { supabaseStorage } from "./supabaseStorageHelpers";
+import { supabaseStorageAdmin } from "./supabaseStorageHelpers";
 
 
 export async function cleanOldFiles(bucket: string, maxFiles = 5) {
+  if (!supabaseStorageAdmin) {
+    console.error("Supabase admin client no configurado");
+    return;
+  }
+
   // listamos todos los archivos
-  const { data: files, error } = await supabaseStorage
+  const { data: files, error } = await supabaseStorageAdmin
     .storage
     .from(bucket)
     .list("", { limit: 1000 });
@@ -22,7 +27,7 @@ export async function cleanOldFiles(bucket: string, maxFiles = 5) {
     const toRemove = sorted.slice(0, removeCount).map(f => f.name);
 
     // eliminamos los más antiguos
-    await supabaseStorage
+    await supabaseStorageAdmin
       .storage
       .from(bucket)
       .remove(toRemove);

@@ -29,6 +29,7 @@ const FormPayment = ({ modeId, onFinish, types, loading, type, initialValues }: 
         amount: initialValues.amount,
         type_id: initialValues.type_id,
         date: initialValues.date ? dayjs(initialValues.date) : null,
+        payment_method: initialValues.payment_method ?? undefined,
         description: initialValues.description ? initialValues.description : null,
       });
     } else {
@@ -79,14 +80,18 @@ const FormPayment = ({ modeId, onFinish, types, loading, type, initialValues }: 
         <DatePicker format="DD/MM/YYYY" className="w-full" />
       </Form.Item>
 
-      {modeId === 4 && (
-        <Form.Item 
-          name="description"
-          label="Descripción"
-        >
-          <Input placeholder="Charla indumentaria / Barker" />
-        </Form.Item>
-      )}
+      <Form.Item
+        name="payment_method"
+        label="Medio de pago"
+        rules={[{ required: true, message: "Seleccione el medio de pago" }]}
+      >
+        <Select
+          options={[
+            { label: "Efectivo", value: "efectivo" },
+            { label: "Transferencia", value: "transferencia" },
+          ]}
+        />
+      </Form.Item>
 
       <div className="mt-3 w-full text-center">
         <Button

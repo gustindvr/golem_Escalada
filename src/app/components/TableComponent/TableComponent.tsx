@@ -24,7 +24,7 @@ export default function TableComponent({ modeId, data, loading, refresh }: Props
     item.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  const columns = dataClientColumns?.concat({
+  const columns = dataClientColumns(modeId, refresh)?.concat({
     title: "Acción",
     key: "action",
     align: "center",
